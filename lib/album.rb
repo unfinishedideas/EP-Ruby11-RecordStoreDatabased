@@ -39,13 +39,15 @@ class Album
     Album.new({:name => name, :id => id})
   end
 
-  def self.search(album_name)
-    return_array = @@albums.values.select { |album| album.name.downcase == album_name.downcase }
-    if return_array == []
-
-    else
-      return_array.sort_by(&:year)
+  def find_by_artist(artist_id)
+    albums = []
+    returned_albums = DB.exec("SELECT * FROM albums_artists WHERE artist_id = #{artist_id};")
+    returned_albums.each() do |album|
+      name = album.fetch("name")
+      id = album.fetch("id").to_i
+      albums.push(Album.new({:name => name, :id => id}))
     end
+    return albums
   end
 
   def songs
